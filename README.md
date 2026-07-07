@@ -46,7 +46,7 @@ Dataset used **Telco Customer Churn** from IBM. It contains information about 7,
 ## 🚀 How to launch a project
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ваш_username/telco-churn-prediction.git
+   git clone https://github.com/Edron1/telco-churn-prediction.git
 2. Install the dependencies:
    pip install -r requirements.txt
 3. Run the script:
