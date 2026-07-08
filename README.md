@@ -47,7 +47,14 @@ Dataset used **Telco Customer Churn** from IBM. It contains information about 7,
 1. Clone the repository:
    ```bash
    git clone https://github.com/Edron1/telco-churn-prediction.git
-2. Install the dependencies:
+   cd telco-churn-prediction
+2. Create and activate a virtual environment
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+3. Install the dependencies:
+   ```bash
    pip install -r requirements.txt
-3. Run the script:
+4. Run the script:
+   ```bash
    python churn_analysis.py
