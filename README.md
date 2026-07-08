@@ -48,7 +48,7 @@ Dataset used **Telco Customer Churn** from IBM. It contains information about 7,
    ```bash
    git clone https://github.com/Edron1/telco-churn-prediction.git
    cd telco-churn-prediction
-2. Create and activate a virtual environment
+2. Create and activate a virtual environment:
    ```bash
    python -m venv .venv
    .venv\Scripts\activate
