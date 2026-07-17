@@ -8,11 +8,21 @@
 ## 📊 Data
 Dataset used **Telco Customer Churn** from IBM. It contains information about 7,043 customers and 21 attributes: demographics, services, contract type, payment method, and service duration.
 
-## 🛠️ Tools used
-- **Pandas** — data loading and preprocessing
-- **Scikit-learn** — pipeline construction, One-Hot Encoding, models
-- **XGBoost** — gradient boosting
-- **Matplotlib / Seaborn** — visualization
+## 🛠️ Tech stack
+
+### Core Libraries
+- **Pandas** - Data loading, preprocessing, and manipulation
+- **NumPy** - Numerical operations and array handling
+- **Scikit-learn** - Pipeline construction, encoding, cross-validation
+- **XGBoost** - Gradient boosting implementation
+- **Matplotlib/Seaborn** - Data visualization and plotting
+- **Joblib** - Model serialization and saving
+
+### Development Tools
+- **Python 3.8+**
+- **Logging** - Structured logging for debugging and monitoring
+- **Git** - Version control
+- **VS Code** - Development environment
 
 ## 🔍 Key steps
 1. **Preprocessing:** transformation `TotalCharges` to numeric format, filling in the blanks.
@@ -24,10 +34,10 @@ Dataset used **Telco Customer Churn** from IBM. It contains information about 7,
 
 ## 📈 Results
 
-| Model        | Accuracy | Cross-validated Accuracy |
-|--------------|----------|--------------------------|
-| RandomForest |  ~74.8%  |         ~75.3%           |
-| XGBoost      |  ~74.8%  |         ~75.1%           |
+| Model        | Accuracy  | Cross-validated Accuracy  |
+|--------------|-----------|---------------------------|
+| RandomForest |  ~77.57%  |         ~78.75%           |
+| XGBoost      |  ~76.08%  |         ~77.88%           |
 
 **Top 3 factors affecting outflow:**
 1. Duration of the contract (`Contract`) — Customers with monthly contracts leave more often.
@@ -36,12 +46,29 @@ Dataset used **Telco Customer Churn** from IBM. It contains information about 7,
 
 ## 📷 Visualization
 
-| Chart                               | Description                                     |
-|-------------------------------------|-------------------------------------------------|
-| `top10_most_important_features.png` | Top 10 Signs That Are Important for RandomForest|
-| `churn_by_contract.png`             | Distribution of outflow by type of contract     |
-| `churn_by_gender.png`               | Outflow distribution by gender                  |
-| `correlation_heat_map.png`          | Correlations of numerical features              |
+| Chart                               | Description                                               |
+|-------------------------------------|-----------------------------------------------------------|
+| `top10_features_model_type.png`     | Top 10 features in the models that showed the best results|
+| `churn_by_contract.png`             | Distribution of outflow by type of contract               |
+| `churn_by_gender.png`               | Outflow distribution by gender                            |
+| `correlation_heat_map.png`          | Correlations of numerical features                        |
+
+## Project architecture
+telco-churn-prediction/
+│
+├── data/
+│
+├── models/
+│
+├── graphs/
+│
+├── churn_analysis.py
+├── data_processor.py
+├── model_trainer.py
+├── visualizer.py
+├── config.py
+├── model_params.py
+└── requirements.txt
 
 ## 🚀 How to launch a project
 1. Clone the repository:

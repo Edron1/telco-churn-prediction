@@ -1,109 +1,106 @@
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_val_score
-import matplotlib.pyplot as plt
-from xgboost import XGBClassifier
-import seaborn as sns
+import logging
 
-data = pd.read_csv('data/WA_Fn-UseC_-Telco-Customer-Churn.csv')
+from model_params import ModelParams, EncoderParams
+from visualizer import Visualizer
+from data_processor import DataProcessor
+from config import DataConfig
+from model_trainer import ModelTrainer
 
-data['TotalCharges'] = pd.to_numeric(data['TotalCharges'], errors='coerce')
-data['TotalCharges'] = data['TotalCharges'].fillna(data['TotalCharges'].median())
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('churn_analysis.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
-print(data.head())
-print(data.info())
-print(data.describe())
+def main():
+    logger.info("Stating churn analysis")
+    
+    model_params = ModelParams()
+    encoder_params = EncoderParams()
+    data_config = DataConfig()
 
-X = data.drop(columns=['Churn', 'customerID'])
-y = (data['Churn'] == 'Yes').astype(int)
+    processor = DataProcessor(data_config)
+    processor.load_data('data/WA_Fn-UseC_-Telco-Customer-Churn.csv').preprocess()
+    X, y = processor.get_data()
+    data = processor.get_full_data()
 
-categorical_cols = X.select_dtypes(include=['object', 'str']).columns.to_list()
+    logger.info(f"Data loaded: {data.shape}")
+    logger.info(f"Distribution of the target variable:\n {y.value_counts(normalize=True)}")
 
-preprocessor = ColumnTransformer([
-    ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False), categorical_cols)
-])
+    visualizer = Visualizer("graphs")
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    visualizer.countplot(
+        data=data,
+        x='gender',
+        hue='Churn',
+        title="Distribution of outflow by gender",
+        xlabel='Gender',
+        ylabel='Number of clients',
+        save_path='churn_by_gender',
+        palette=['#3498db', '#e74c3c'],
+        figsize=(10, 4)
+    )
 
-model_1_pipeline = Pipeline([
-    ('preprocessor', preprocessor),
-    ('classifier', RandomForestClassifier(random_state=0, n_estimators=50))
-])
+    visualizer.countplot(
+        data=data,
+        x='Contract',
+        hue='Churn',
+        title='Outflow by contract type',
+        xlabel='Contract type',
+        ylabel='Number of clients',
+        save_path='churn_by_contract',
+        palette=['#2ecc71', '#e74c3c'],
+        figsize=(10, 4)
+    )
 
-model_1_pipeline.fit(X_train, y_train)
-pred_1 = model_1_pipeline.predict(X_test)
-accuracy = accuracy_score(y_test, pred_1)
+    numeric_cols = X.select_dtypes(include=['float64', 'int64'])
+    correlation_matrix = numeric_cols.corr()
+    visualizer.heatmap(
+        data=correlation_matrix,
+        annot=True,
+        cmap='coolwarm',
+        fmt='.2f',
+        linewidths=0.5,
+        title='Correlation matrix of numerical features',
+        save_path='correlation_heat_map',
+        figsize=(10, 8)
+    )
 
-print(f"Accuracy: {accuracy*100:.2f}%")
+    trainer = ModelTrainer(data_config, model_params, encoder_params)
+    results = trainer.train_all_models(X, y)
 
-scores = cross_val_score(model_1_pipeline, X_train, y_train, cv=5)
-print(f'Cross-validation mean accuracy: {scores.mean():.4f}')
+    trainer.print_results()
 
-model_2_pipeline = Pipeline([
-    ('preprocessor', preprocessor),
-    ('classifier', XGBClassifier(random_state=0, n_estimators=100, learning_rate=0.5))
-])
+    best_model_type = trainer.best_model
+    logger.info(f"\n BEST MODEL: {best_model_type}")
 
-model_2_pipeline.fit(X_train, y_train)
+    importances_df = trainer.get_feature_importance(best_model_type)
+    top_10 = importances_df.head(10)
 
-pred_2 = model_2_pipeline.predict(X_test)
+    logger.info("Top 10 importance fetures:")
+    logger.info(top_10)
 
-accuracy = accuracy_score(y_test, pred_2)
+    visualizer.barplot(
+        data=top_10,
+        x='importance',
+        y='feature',
+        title=f'Top 10 importance fetures ({best_model_type})',
+        xlabel='Importance',
+        ylabel='Feature',
+        save_path=f'top10_features_{best_model_type}',
+        palette='viridis',
+        figsize=(10, 6)
+    )
 
-print(f"Accuracy: {accuracy*100:.2f}%")
+    trainer.save_model(best_model_type)
 
-scores = cross_val_score(model_2_pipeline, X_train, y_train, cv=5)
-print(f'Cross-validation mean accuracy: {scores.mean():.4f}')
+    logger.info("Analysis completed")
 
-print(y.value_counts(normalize=True)) #73% No, 26% Yes
+    return trainer, results
 
-feature_names = preprocessor.get_feature_names_out()
-model_features = model_1_pipeline.named_steps['classifier']
-importances = model_features.feature_importances_
-
-feature_imporances_df = pd.DataFrame({
-    'feature': feature_names,
-    'importance': importances
-})
-
-top_10 = feature_imporances_df.sort_values('importance', ascending=False).head(10)
-print(top_10)
-
-#Statistical chart for clients
-sns.countplot(data=data, x='gender', hue='Churn', palette=['skyblue', 'salmon'])
-plt.title('Statistical graph of customer churn')
-plt.xlabel('Gender')
-plt.ylabel('Clients count')
-plt.legend(title="Churn", labels=['No', 'Yes'])
-plt.show()
-plt.savefig('graphs/churn_by_gender')
-#Top 10 most important features
-plt.figure(figsize=(10, 6))
-sns.barplot(data=top_10, x='importance', y='feature', palette='viridis')
-plt.title('Top 10 most important features (RandomForest)')
-plt.xlabel('Importance')
-plt.ylabel('Feature')
-plt.tight_layout()
-plt.show()
-plt.savefig('graphs/top10_most_important_features')
-#Churn for contract
-sns.countplot(data=data, x='Contract', hue='Churn', palette=['skyblue', 'salmon'])
-plt.title('Churn for contract')
-plt.xlabel('Contract')
-plt.ylabel('Churn')
-plt.legend(title="Churn", labels=['No', 'Yes'])
-plt.show()
-plt.savefig('graphs/churn_by_contract')
-#Correlation heat map
-numeric_cols = X.select_dtypes(include=['float64', 'int64'])
-correlation_matrix = numeric_cols.corr()
-plt.figure(figsize=(10, 8))
-sns.heatmap(data=correlation_matrix, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.5)
-plt.title('Correlation heat map')
-plt.show()
-plt.savefig('graphs/correlation_heat_map')
+if __name__ == "__main__":
+    trainer, results = main()

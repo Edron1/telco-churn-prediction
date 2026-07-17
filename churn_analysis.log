@@ -1,0 +1,55 @@
+2026-07-17 11:56:33,114 - __main__ - INFO - Stating churn analysis
+2026-07-17 11:56:33,114 - data_processor - INFO - Load data from data/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-07-17 11:56:33,222 - data_processor - INFO - 7043 lines uploaded
+2026-07-17 11:56:33,223 - data_processor - INFO - Start preprocessing
+2026-07-17 11:59:01,073 - __main__ - INFO - Stating churn analysis
+2026-07-17 11:59:01,073 - data_processor - INFO - Load data from data/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-07-17 11:59:01,105 - data_processor - INFO - 7043 lines uploaded
+2026-07-17 11:59:01,105 - data_processor - INFO - Start preprocessing
+2026-07-17 11:59:01,108 - data_processor - INFO - Filled in the gaps in TotalCharges: 0
+2026-07-17 11:59:01,149 - data_processor - INFO - Preprocessing is complete. X: (7043, 19), y: (7043,)
+2026-07-17 11:59:01,149 - __main__ - INFO - Data loaded: (7043, 21)
+2026-07-17 11:59:01,168 - __main__ - INFO - Distribution of the target variable:
+ Churn
+0    0.73463
+1    0.26537
+Name: proportion, dtype: float64
+2026-07-17 11:59:02,202 - visualizer - INFO - Graph saved in graphs/churn_by_gender.png
+2026-07-17 11:59:21,394 - visualizer - INFO - Graph saved in graphs/churn_by_contract.png
+2026-07-17 12:09:19,949 - __main__ - INFO - Stating churn analysis
+2026-07-17 12:09:19,950 - data_processor - INFO - Load data from data/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-07-17 12:09:19,974 - data_processor - INFO - 7043 lines uploaded
+2026-07-17 12:09:19,974 - data_processor - INFO - Start preprocessing
+2026-07-17 12:09:19,981 - data_processor - INFO - Filled in the gaps in TotalCharges: 0
+2026-07-17 12:09:19,983 - data_processor - INFO - Preprocessing is complete. X: (7043, 19), y: (7043,)
+2026-07-17 12:09:19,983 - __main__ - INFO - Data loaded: (7043, 21)
+2026-07-17 12:09:19,985 - __main__ - INFO - Distribution of the target variable:
+ Churn
+0    0.73463
+1    0.26537
+Name: proportion, dtype: float64
+2026-07-17 12:09:20,398 - visualizer - INFO - Graph saved in graphs/churn_by_gender.png
+2026-07-17 12:14:05,047 - visualizer - INFO - Graph saved in graphs/churn_by_contract.png
+2026-07-17 12:14:09,611 - visualizer - INFO - Graph saved in graphs/correlation_heat_map.png
+2026-07-17 12:14:16,995 - model_trainer - INFO - Data separation: train=5634, test=1409
+2026-07-17 12:14:16,995 - model_trainer - INFO - Train model random_forest
+2026-07-17 12:14:18,481 - model_trainer - INFO - Model random_forest: accuracy = 0.7757, cv=0.7875
+2026-07-17 12:14:18,481 - model_trainer - INFO - Train model xgboost
+2026-07-17 12:14:19,412 - model_trainer - INFO - Model xgboost: accuracy = 0.7608, cv=0.7788
+2026-07-17 12:14:19,414 - __main__ - INFO - 
+ BEST MODEL: random_forest
+2026-07-17 12:14:19,469 - __main__ - INFO - Top 10 importance fetures:
+2026-07-17 12:14:19,469 - __main__ - INFO -                                    feature  importance
+32         onehot__Contract_Month-to-month    0.235893
+23                  onehot__TechSupport_No    0.099192
+14               onehot__OnlineSecurity_No    0.090942
+12     onehot__InternetService_Fiber optic    0.080078
+34               onehot__Contract_Two year    0.075977
+39  onehot__PaymentMethod_Electronic check    0.054015
+33               onehot__Contract_One year    0.035167
+17                 onehot__OnlineBackup_No    0.035051
+16              onehot__OnlineSecurity_Yes    0.032033
+11             onehot__InternetService_DSL    0.028090
+2026-07-17 12:14:19,989 - visualizer - INFO - Graph saved in graphs/top10_features_random_forest.png
+2026-07-17 12:15:32,011 - model_trainer - INFO - Model saved in models//random_forest.joblib
+2026-07-17 12:15:32,012 - __main__ - INFO - Analysis completed
