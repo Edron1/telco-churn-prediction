@@ -55,6 +55,7 @@ Dataset used **Telco Customer Churn** from IBM. It contains information about 7,
 
 ## Project architecture
 telco-churn-prediction/
+
 │
 ├── data/
 │
