@@ -53,23 +53,32 @@ Dataset used **Telco Customer Churn** from IBM. It contains information about 7,
 | `churn_by_gender.png`               | Outflow distribution by gender                            |
 | `correlation_heat_map.png`          | Correlations of numerical features                        |
 
-## Project architecture
-telco-churn-prediction/
+## 📁 Project structure
 
+```
+telco-churn-prediction/
 │
 ├── data/
+│   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
 │
 ├── models/
+│   └── random_forest.joblib
 │
 ├── graphs/
+│   ├── churn_by_gender.png
+│   ├── churn_by_contract.png
+│   └── top10_features_random_forest.png
 │
-├── churn_analysis.py
-├── data_processor.py
-├── model_trainer.py
-├── visualizer.py
-├── config.py
-├── model_params.py
-└── requirements.txt
+├── churn_analysis.py        # Main pipeline
+├── data_processor.py        # Data loading and preprocessing
+├── model_trainer.py         # Model training and evaluation
+├── visualizer.py            # Data visualization
+├── config.py                # Data configuration
+├── model_params.py          # Model hyperparameters
+│
+├── requirements.txt
+└── README.md
+```
 
 ## 🚀 How to launch a project
 1. Clone the repository:
