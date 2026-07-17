@@ -5,7 +5,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_auc_score
 import logging
 from typing import Dict, Any, Tuple
 import joblib
@@ -83,6 +83,7 @@ class ModelTrainer:
         y_pred_proba = model.predict_proba(X_test)[:,-1]
 
         accuracy = accuracy_score(y_test, y_pred)
+        roc_auc = roc_auc_score(y_test, y_pred_proba)
 
         cv_scores = cross_val_score(
             model, X_train, y_train,
@@ -98,6 +99,7 @@ class ModelTrainer:
             'cv_std': cv_scores.std(),
             'y_pred': y_pred,
             'y_pred_proba': y_pred_proba,
+            'roc_auc': roc_auc,
             'classification_report': classification_report(y_test, y_pred),
             'confusion_matrix': confusion_matrix(y_test, y_pred)
         }
@@ -105,11 +107,11 @@ class ModelTrainer:
         self.models[model_type] =  model
         self.results[model_type] = results
 
-        if accuracy > self.best_score:
-            self.best_score = accuracy
+        if roc_auc > self.best_score:
+            self.best_score = roc_auc
             self.best_model = model_type
 
-        logger.info(f"Model {model_type}: accuracy = {accuracy:.4f}, cv={cv_scores.mean():.4f}")
+        logger.info(f"Model {model_type}: accuracy = {accuracy:.4f}, cv = {cv_scores.mean():.4f}, roc-auc-score = {roc_auc:.4f}")
 
         return results
     
@@ -169,6 +171,7 @@ class ModelTrainer:
             print(f"\n📊 {model_type.upper()}")
             print(f"   Accuracy: {results['accuracy']:.4f}")
             print(f"   CV Mean:  {results['cv_mean']:.4f} (±{results['cv_std']:.4f})")
+            print(f"   {'ROC-AUC':<15}: {results['roc_auc']:.4f}")
             print(f"\n   Classification Report:")
             print(results['classification_report'])
             print(f"   Confusion Matrix:")

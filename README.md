@@ -34,10 +34,10 @@ Dataset used **Telco Customer Churn** from IBM. It contains information about 7,
 
 ## 📈 Results
 
-| Model        | Accuracy  | Cross-validated Accuracy  |
-|--------------|-----------|---------------------------|
-| RandomForest |  ~77.57%  |         ~78.75%           |
-| XGBoost      |  ~76.08%  |         ~77.88%           |
+| Model        | Accuracy  | Cross-validated Accuracy  |  ROC-AUC|
+|--------------|-----------|---------------------------|---------|
+| RandomForest |  ~77.57%  |         ~78.75%           | ~82.31% |
+| XGBoost      |  ~76.08%  |         ~77.88%           | ~80.14% |
 
 **Top 3 factors affecting outflow:**
 1. Duration of the contract (`Contract`) — Customers with monthly contracts leave more often.
